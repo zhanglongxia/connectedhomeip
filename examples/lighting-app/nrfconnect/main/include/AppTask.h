@@ -88,6 +88,8 @@ private:
     static void FunctionHandler(const AppEvent & event);
     static void StartBLEAdvertisementAndLightActionEventHandler(const AppEvent & event);
 
+    static void ThreadLedCallback(uint32_t pinName, int state, void *context);
+
     FunctionEvent mFunction   = FunctionEvent::NoneSelected;
     bool mFunctionTimerActive = false;
     PWMDevice mPWMDevice;

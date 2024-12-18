@@ -92,6 +92,7 @@ Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask:
 
 LEDWidget sStatusLED;
 LEDWidget sIdentifyLED;
+LEDWidget sThreadStateLED;
 #if NUMBER_OF_LEDS == 4
 FactoryResetLEDsWrapper<2> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED, FACTORY_RESET_SIGNAL_LED1 } };
 #endif
@@ -195,6 +196,9 @@ CHIP_ERROR AppTask::Init()
     sIdentifyLED.Init(LIGHTING_STATE_LED);
     sIdentifyLED.Set(false);
 
+    sThreadStateLED.Init(DK_LED3);
+    sThreadStateLED.Set(false);
+
     UpdateStatusLED();
 
     // Initialize buttons
@@ -294,7 +298,27 @@ CHIP_ERROR AppTask::Init()
         LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
     }
 
+#if defined(CONFIG_NET_L2_OPENTHREAD)
+    ThreadStackMgr().SetThreadLedCallback(ThreadLedCallback);
+#endif
+
     return err;
+}
+
+void AppTask::ThreadLedCallback(uint32_t pinName, int state, void *context)
+{
+    if (state == 0)
+    {
+        sThreadStateLED.Set(false);
+    }
+    else if (state == 1)
+    {
+        sThreadStateLED.Set(true);
+    }
+    else if (state == 2)
+    {
+        sThreadStateLED.Blink(500);
+    }
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -384,6 +408,33 @@ void AppTask::LightingActionEventHandler(const AppEvent & event)
 
 void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 {
+    if (DK_BTN1_MSK & hasChanged) {
+        LOG_ERR("Button 1: %u", buttonState);
+    }
+
+    if (DK_BTN2_MSK & hasChanged) {
+        LOG_ERR("Button 2: %u", buttonState);
+    }
+
+    if (DK_BTN3_MSK & hasChanged) {
+        LOG_ERR("Button 3: %u", buttonState);
+
+        if (buttonState && ConnectivityMgr().SetThreadWedEnabled(false) != CHIP_NO_ERROR)
+        {
+            LOG_ERR("ConnectivityMgr().SetThreadWedEnabled(false)");
+        }
+    }
+
+    if (DK_BTN4_MSK & hasChanged) {
+        LOG_ERR("Button 4: %u", buttonState);
+
+        if (buttonState && ConnectivityMgr().SetThreadWedEnabled(true) != CHIP_NO_ERROR)
+        {
+            LOG_ERR("ConnectivityMgr().SetThreadWedEnabled(true)");
+        }
+    }
+
+#if 0
     AppEvent button_event;
     button_event.Type = AppEventType::Button;
 
@@ -423,6 +474,7 @@ void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
         button_event.Handler = FunctionHandler;
         PostEvent(button_event);
     }
+#endif
 }
 
 void AppTask::FunctionTimerTimeoutCallback(k_timer * timer)

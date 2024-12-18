@@ -46,6 +46,7 @@ protected:
     bool _IsThreadEnabled(void);
     ConnectivityManager::ThreadDeviceType _GetThreadDeviceType(void);
     CHIP_ERROR _SetThreadDeviceType(ConnectivityManager::ThreadDeviceType deviceType);
+    CHIP_ERROR _SetThreadWedEnabled(bool val);
     bool _IsThreadAttached(void);
     bool _IsThreadProvisioned(void);
     void _ErasePersistentInfo(void);
@@ -84,6 +85,13 @@ inline ConnectivityManager::ThreadDeviceType GenericConnectivityManagerImpl_NoTh
 template <class ImplClass>
 inline CHIP_ERROR
 GenericConnectivityManagerImpl_NoThread<ImplClass>::_SetThreadDeviceType(ConnectivityManager::ThreadDeviceType deviceType)
+{
+    return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+}
+
+template <class ImplClass>
+inline CHIP_ERROR
+GenericConnectivityManagerImpl_NoThread<ImplClass>::_SetThreadWedEnabled(bool val)
 {
     return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 }

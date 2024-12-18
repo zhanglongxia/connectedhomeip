@@ -289,6 +289,9 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadEnable
     {
         otErr = otThreadSetEnabled(mOTInst, val);
         VerifyOrExit(otErr == OT_ERROR_NONE, );
+
+        //otErr = otCliWedAutoStart(val);
+        //VerifyOrExit(otErr == OT_ERROR_NONE, );
     }
 
     if (!val && isIp6Enabled)
@@ -462,6 +465,36 @@ exit:
 
     return error;
 }
+
+template <class ImplClass>
+CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadWedEnabled(bool val)
+{
+    VerifyOrReturnError(mOTInst, CHIP_ERROR_INCORRECT_STATE);
+    otError otErr = OT_ERROR_NONE;
+
+    Impl()->LockThreadStack();
+
+    otErr = otCliWedAutoStart(val);
+
+    Impl()->UnlockThreadStack();
+
+    return MapOpenThreadError(otErr);
+}
+
+template <class ImplClass>
+CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadLedCallback(SetLedStateCallback callback)
+{
+    VerifyOrReturnError(mOTInst, CHIP_ERROR_INCORRECT_STATE);
+
+    Impl()->LockThreadStack();
+
+    otThreadSetLedCallback(mOTInst, callback, nullptr);
+
+exit:
+    Impl()->UnlockThreadStack();
+    return CHIP_NO_ERROR;
+}
+
 
 template <class ImplClass>
 void GenericThreadStackManagerImpl_OpenThread<ImplClass>::_OnNetworkScanFinished(otActiveScanResult * aResult, void * aContext)

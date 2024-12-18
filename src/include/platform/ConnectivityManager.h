@@ -206,6 +206,7 @@ public:
     bool IsThreadEnabled();
     ThreadDeviceType GetThreadDeviceType();
     CHIP_ERROR SetThreadDeviceType(ThreadDeviceType deviceType);
+    CHIP_ERROR SetThreadWedEnabled(bool val);
     bool IsThreadAttached();
     bool IsThreadProvisioned();
     void ErasePersistentInfo();
@@ -475,6 +476,11 @@ inline CHIP_ERROR ConnectivityManager::SetThreadDeviceType(ThreadDeviceType devi
     return static_cast<ImplClass *>(this)->_SetThreadDeviceType(deviceType);
 }
 
+inline CHIP_ERROR ConnectivityManager::SetThreadWedEnabled(bool val)
+{
+    return static_cast<ImplClass *>(this)->_SetThreadWedEnabled(val);
+}
+    
 inline CHIP_ERROR ConnectivityManager::SetPollingInterval(System::Clock::Milliseconds32 pollingInterval)
 {
 #if CHIP_CONFIG_ENABLE_ICD_SERVER

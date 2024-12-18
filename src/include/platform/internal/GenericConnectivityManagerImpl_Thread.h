@@ -60,6 +60,9 @@ protected:
     bool _IsThreadEnabled();
     ConnectivityManager::ThreadDeviceType _GetThreadDeviceType();
     CHIP_ERROR _SetThreadDeviceType(ConnectivityManager::ThreadDeviceType deviceType);
+    CHIP_ERROR _SetThreadWedEnabled(bool val);
+    CHIP_ERROR _SetThreadLedCallback(SetLedStateCallback callback);
+
 #if CHIP_CONFIG_ENABLE_ICD_SERVER
     CHIP_ERROR _SetPollingInterval(System::Clock::Milliseconds32 pollingInterval);
 #endif /* CHIP_CONFIG_ENABLE_ICD_SERVER */
@@ -126,6 +129,20 @@ inline CHIP_ERROR
 GenericConnectivityManagerImpl_Thread<ImplClass>::_SetThreadDeviceType(ConnectivityManager::ThreadDeviceType deviceType)
 {
     return ThreadStackMgrImpl().SetThreadDeviceType(deviceType);
+}
+
+template <class ImplClass>
+inline CHIP_ERROR
+GenericConnectivityManagerImpl_Thread<ImplClass>::_SetThreadLedCallback(SetLedStateCallback callback)
+{
+    return ThreadStackMgrImpl().SetThreadLedCallback(callback);
+}
+
+template <class ImplClass>
+inline CHIP_ERROR
+GenericConnectivityManagerImpl_Thread<ImplClass>::_SetThreadWedEnabled(bool val)
+{
+    return ThreadStackMgrImpl().SetThreadWedEnabled(val);
 }
 
 #if CHIP_CONFIG_ENABLE_ICD_SERVER

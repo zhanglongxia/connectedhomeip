@@ -80,6 +80,7 @@ using DnsBrowseCallback  = void (*)(void * context, chip::Dnssd::DnssdService * 
 using DnsAsyncReturnCallback = void (*)(void * context, CHIP_ERROR error);
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 
+using SetLedStateCallback  = void (*)(uint32_t pinName, int state, void *context);
 /**
  * Provides features for initializing and interacting with the Thread stack on
  * a chip-enabled device.
@@ -112,6 +113,10 @@ public:
 
     CHIP_ERROR SetThreadProvision(ByteSpan aDataset);
     CHIP_ERROR SetThreadEnabled(bool val);
+    CHIP_ERROR SetThreadWedEnabled(bool val);
+
+    CHIP_ERROR SetThreadLedCallback(SetLedStateCallback callback);
+
     CHIP_ERROR AttachToThreadNetwork(const Thread::OperationalDataset & dataset,
                                      NetworkCommissioning::Internal::WirelessDriver::ConnectCallback * callback);
     CHIP_ERROR StartThreadScan(NetworkCommissioning::ThreadDriver::ScanCallback * callback);
@@ -287,6 +292,16 @@ inline bool ThreadStackManager::IsThreadEnabled()
 inline CHIP_ERROR ThreadStackManager::SetThreadEnabled(bool val)
 {
     return static_cast<ImplClass *>(this)->_SetThreadEnabled(val);
+}
+
+inline CHIP_ERROR ThreadStackManager::SetThreadWedEnabled(bool val)
+{
+    return static_cast<ImplClass *>(this)->_SetThreadWedEnabled(val);
+}
+
+inline CHIP_ERROR ThreadStackManager::SetThreadLedCallback(SetLedStateCallback callback)
+{
+    return static_cast<ImplClass *>(this)->_SetThreadLedCallback(callback);
 }
 
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
